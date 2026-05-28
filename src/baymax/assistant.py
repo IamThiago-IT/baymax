@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from .i18n import t
 from .safety import SafetyResult, assess_message
 
 
@@ -9,18 +10,18 @@ def _extract_symptom_prompt(message: str) -> str:
     normalized = message.lower()
 
     if any(keyword in normalized for keyword in ("fever", "temperature")):
-        return "How high is the fever, and how long has it been going on?"
+        return "fever"
 
     if any(keyword in normalized for keyword in ("cough", "sore throat", "throat")):
-        return "Is the cough dry or productive, and do you have trouble breathing or swallowing?"
+        return "cough"
 
     if any(keyword in normalized for keyword in ("headache", "migraine")):
-        return "Is the headache sudden or severe, and do you have vision changes, weakness, or vomiting?"
+        return "headache"
 
     if any(keyword in normalized for keyword in ("stomach", "nausea", "vomit", "diarrhea")):
-        return "Are you able to keep fluids down, and do you have severe pain or blood in the vomit or stool?"
+        return "stomach"
 
-    return "Can you share your main symptom, how long it has been happening, and what makes it better or worse?"
+    return "default_symptom"
 
 
 @dataclass
@@ -32,24 +33,22 @@ class AssistantResponse:
 @dataclass
 class BaymaxAssistant:
     user_name: str | None = None
+    language: str = "eng"
     history: list[tuple[str, str]] = field(default_factory=list)
 
     def greet(self) -> str:
-        return (
-            "Hello, I am Baymax. I can help with general health guidance, symptom triage, and safe next steps. "
-            "Type 'exit' to leave the conversation."
-        )
+        return t(self.language, "greeting")
 
     def respond(self, message: str) -> AssistantResponse:
         self.history.append(("user", message))
 
-        safety = assess_message(message)
+        safety = assess_message(message, self.language)
         if safety.level != "safe" and safety.message:
             reply = safety.message
         else:
+            symptom_key = _extract_symptom_prompt(message)
             reply = (
-                f"I hear you. {_extract_symptom_prompt(message)} "
-                "If symptoms are severe, worsening, or new chest pain or breathing trouble appears, seek urgent care."
+                t(self.language, "general_reply", prompt=t(self.language, symptom_key), urgent=t(self.language, "urgent_fallback"))
             )
 
         self.history.append(("assistant", reply))

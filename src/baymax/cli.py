@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 from .assistant import BaymaxAssistant
+from .i18n import detect_language, t
 
 
 def main() -> int:
-    assistant = BaymaxAssistant()
+    language = detect_language()
+    assistant = BaymaxAssistant(language=language)
     print(assistant.greet())
 
     while True:
         try:
-            message = input("You: ").strip()
+            message = input(t(language, "prompt")).strip()
         except EOFError:
             print()
             return 0
@@ -18,11 +20,11 @@ def main() -> int:
             continue
 
         if message.lower() in {"exit", "quit", "q"}:
-            print("Baymax: Take care. If symptoms worsen, get medical help promptly.")
+            print(t(language, "exit"))
             return 0
 
         response = assistant.respond(message)
-        print(f"Baymax: {response.text}")
+        print(f"{t(language, 'assistant_prefix')}{response.text}")
 
 
 if __name__ == "__main__":
