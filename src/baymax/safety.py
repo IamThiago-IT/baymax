@@ -18,6 +18,14 @@ EMERGENCY_KEYWORDS = (
     "one side",
     "suicidal",
     "kill myself",
+    # PT-BR
+    "dor no peito",
+    "dificuldade para respirar",
+    "não consigo respirar",
+    "sangramento grave",
+    "desmaiei",
+    "suicida",
+    "me matar",
 )
 
 MEDICAL_DIAGNOSIS_KEYWORDS = (
@@ -26,6 +34,12 @@ MEDICAL_DIAGNOSIS_KEYWORDS = (
     "what is my diagnosis",
     "prescribe",
     "which medicine should i take",
+    # PT-BR
+    "que doença eu tenho",
+    "me diagnostique",
+    "qual é o meu diagnóstico",
+    "prescrever",
+    "qual remédio devo tomar",
 )
 
 
@@ -41,24 +55,13 @@ def assess_message(message: str, language: str = "eng") -> SafetyResult:
     if any(keyword in normalized for keyword in EMERGENCY_KEYWORDS):
         return SafetyResult(
             level="emergency",
-            message=t(
-                language,
-                "urgent_fallback",
-            ),
+            message=t(language, "urgent_fallback"),
         )
 
     if any(keyword in normalized for keyword in MEDICAL_DIAGNOSIS_KEYWORDS):
         return SafetyResult(
             level="restricted",
-            message=(
-                "I can help with general health guidance and symptom triage, but I can't diagnose or prescribe. "
-                "If you share your main symptoms, I can suggest safe next steps."
-            )
-            if language == "eng"
-            else (
-                "Posso ajudar com orientações gerais de saúde e triagem de sintomas, mas não posso diagnosticar nem prescrever. "
-                "Se você me disser os principais sintomas, posso sugerir próximos passos seguros."
-            ),
+            message=t(language, "restricted_message"),
         )
 
     return SafetyResult(level="safe", message="")

@@ -12,7 +12,7 @@ def main() -> int:
     while True:
         try:
             message = input(t(language, "prompt")).strip()
-        except EOFError:
+        except (EOFError, KeyboardInterrupt):
             print()
             return 0
 

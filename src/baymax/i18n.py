@@ -5,7 +5,7 @@ import os
 
 SUPPORTED_LANGUAGES = {"eng", "ptbr"}
 
-STRINGS = {
+STRINGS: dict[str, dict[str, str]] = {
     "eng": {
         "greeting": (
             "Hello, I am Baymax. I can help with general health guidance, symptom triage, and safe next steps. "
@@ -25,6 +25,11 @@ STRINGS = {
             "Can you share your main symptom, how long it has been happening, and what makes it better or worse?"
         ),
         "general_reply": "I hear you. {prompt} {urgent}",
+        "follow_up": "Thanks for the update. {prompt} {urgent}",
+        "restricted_message": (
+            "I can help with general health guidance and symptom triage, but I can't diagnose or prescribe. "
+            "If you share your main symptoms, I can suggest safe next steps."
+        ),
     },
     "ptbr": {
         "greeting": (
@@ -45,6 +50,11 @@ STRINGS = {
             "Pode me dizer qual é o principal sintoma, há quanto tempo ele acontece e o que melhora ou piora?"
         ),
         "general_reply": "Entendi. {prompt} {urgent}",
+        "follow_up": "Obrigado pela atualização. {prompt} {urgent}",
+        "restricted_message": (
+            "Posso ajudar com orientações gerais de saúde e triagem de sintomas, mas não posso diagnosticar nem prescrever. "
+            "Se você me disser os principais sintomas, posso sugerir próximos passos seguros."
+        ),
     },
 }
 
@@ -86,6 +96,13 @@ def detect_language() -> str:
 
 
 def t(language: str, key: str, **kwargs: str) -> str:
+    """Return the translated string for *key* in *language*.
+
+    Falls back to English if the language is unsupported or the key is
+    missing, and returns a safe placeholder instead of raising ``KeyError``.
+    """
     selected_language = language if language in SUPPORTED_LANGUAGES else "eng"
-    template = STRINGS[selected_language][key]
+    template = STRINGS[selected_language].get(key) or STRINGS["eng"].get(key)
+    if template is None:
+        return f"[missing: {key}]"
     return template.format(**kwargs)
