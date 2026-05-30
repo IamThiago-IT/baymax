@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .i18n import t
+
 
 EMERGENCY_KEYWORDS = (
     "chest pain",
@@ -16,6 +18,14 @@ EMERGENCY_KEYWORDS = (
     "one side",
     "suicidal",
     "kill myself",
+    # PT-BR
+    "dor no peito",
+    "dificuldade para respirar",
+    "não consigo respirar",
+    "sangramento grave",
+    "desmaiei",
+    "suicida",
+    "me matar",
 )
 
 MEDICAL_DIAGNOSIS_KEYWORDS = (
@@ -24,6 +34,12 @@ MEDICAL_DIAGNOSIS_KEYWORDS = (
     "what is my diagnosis",
     "prescribe",
     "which medicine should i take",
+    # PT-BR
+    "que doença eu tenho",
+    "me diagnostique",
+    "qual é o meu diagnóstico",
+    "prescrever",
+    "qual remédio devo tomar",
 )
 
 
@@ -33,25 +49,19 @@ class SafetyResult:
     message: str
 
 
-def assess_message(message: str) -> SafetyResult:
+def assess_message(message: str, language: str = "eng") -> SafetyResult:
     normalized = message.lower().strip()
 
     if any(keyword in normalized for keyword in EMERGENCY_KEYWORDS):
         return SafetyResult(
             level="emergency",
-            message=(
-                "This could be urgent. Call local emergency services now or go to the nearest emergency department. "
-                "If possible, have someone stay with you while you get help."
-            ),
+            message=t(language, "urgent_fallback"),
         )
 
     if any(keyword in normalized for keyword in MEDICAL_DIAGNOSIS_KEYWORDS):
         return SafetyResult(
             level="restricted",
-            message=(
-                "I can help with general health guidance and symptom triage, but I can't diagnose or prescribe. "
-                "If you share your main symptoms, I can suggest safe next steps."
-            ),
+            message=t(language, "restricted_message"),
         )
 
     return SafetyResult(level="safe", message="")

@@ -2,22 +2,64 @@
 
 Baymax is a health-focused virtual assistant CLI.
 
+It automatically chooses the interface language from the operating system locale:
+
+- Portuguese locales use `ptbr`
+- English locales use `eng`
+- unknown locales fall back to English
+
 It is designed to:
 
 - provide calm, simple guidance for general well-being
-- ask follow-up questions about symptoms
+- ask follow-up questions about symptoms (in English and Portuguese)
 - highlight urgent warning signs
 - avoid diagnosis and prescription advice
 
-## Run locally
+## Setup
+
+Install the package in editable mode (only needed once):
+
+```bash
+pip install -e .
+```
+
+To also install the development tools (pytest, ruff, mypy):
+
+```bash
+pip install -e ".[dev]"
+```
+
+## Run
 
 ```bash
 python -m baymax
+```
+
+Or, after `pip install -e .`:
+
+```bash
+baymax
+```
+
+## Tests
+
+```bash
+pytest
+```
+
+## Lint & type-check
+
+```bash
+ruff check src tests
+mypy src
 ```
 
 ## Example
 
 ```text
 You: I have a fever and a sore throat
-Baymax: I can help with general guidance. How high is the fever, and are you having trouble breathing or swallowing?
+Baymax: I hear you. How high is the fever, and how long has it been going on? If symptoms are severe, worsening, or new chest pain or breathing trouble appears, seek urgent care.
+
+You: still have the fever
+Baymax: Thanks for the update. How high is the fever, and how long has it been going on? If symptoms are severe...
 ```

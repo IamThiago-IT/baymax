@@ -2,25 +2,40 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from .i18n import t
 from .safety import SafetyResult, assess_message
 
 
-def _extract_symptom_prompt(message: str) -> str:
+# Keywords organized by symptom category and language.
+# Each language key maps to a tuple of trigger phrases.
+SYMPTOM_KEYWORDS: dict[str, dict[str, tuple[str, ...]]] = {
+    "fever": {
+        "eng": ("fever", "temperature"),
+        "ptbr": ("febre", "temperatura"),
+    },
+    "cough": {
+        "eng": ("cough", "sore throat", "throat"),
+        "ptbr": ("tosse", "garganta", "catarro"),
+    },
+    "headache": {
+        "eng": ("headache", "migraine"),
+        "ptbr": ("dor de cabeça", "enxaqueca", "cefaleia"),
+    },
+    "stomach": {
+        "eng": ("stomach", "nausea", "vomit", "diarrhea"),
+        "ptbr": ("estômago", "náusea", "vômito", "diarreia", "barriga", "enjoo"),
+    },
+}
+
+
+def _extract_symptom_prompt(message: str, language: str = "eng") -> str:
+    """Return the symptom key that best matches *message* in *language*."""
     normalized = message.lower()
-
-    if any(keyword in normalized for keyword in ("fever", "temperature")):
-        return "How high is the fever, and how long has it been going on?"
-
-    if any(keyword in normalized for keyword in ("cough", "sore throat", "throat")):
-        return "Is the cough dry or productive, and do you have trouble breathing or swallowing?"
-
-    if any(keyword in normalized for keyword in ("headache", "migraine")):
-        return "Is the headache sudden or severe, and do you have vision changes, weakness, or vomiting?"
-
-    if any(keyword in normalized for keyword in ("stomach", "nausea", "vomit", "diarrhea")):
-        return "Are you able to keep fluids down, and do you have severe pain or blood in the vomit or stool?"
-
-    return "Can you share your main symptom, how long it has been happening, and what makes it better or worse?"
+    for symptom_key, lang_keywords in SYMPTOM_KEYWORDS.items():
+        keywords = lang_keywords.get(language) or lang_keywords.get("eng", ())
+        if any(keyword in normalized for keyword in keywords):
+            return symptom_key
+    return "default_symptom"
 
 
 @dataclass
@@ -32,24 +47,31 @@ class AssistantResponse:
 @dataclass
 class BaymaxAssistant:
     user_name: str | None = None
+    language: str = "eng"
     history: list[tuple[str, str]] = field(default_factory=list)
+    # Tracks which symptom categories have already been asked about so the
+    # assistant can use the "follow_up" template instead of repeating itself.
+    _seen_symptoms: set[str] = field(default_factory=set, init=False, repr=False)
 
     def greet(self) -> str:
-        return (
-            "Hello, I am Baymax. I can help with general health guidance, symptom triage, and safe next steps. "
-            "Type 'exit' to leave the conversation."
-        )
+        return t(self.language, "greeting")
 
     def respond(self, message: str) -> AssistantResponse:
         self.history.append(("user", message))
 
-        safety = assess_message(message)
+        safety = assess_message(message, self.language)
         if safety.level != "safe" and safety.message:
             reply = safety.message
         else:
-            reply = (
-                f"I hear you. {_extract_symptom_prompt(message)} "
-                "If symptoms are severe, worsening, or new chest pain or breathing trouble appears, seek urgent care."
+            symptom_key = _extract_symptom_prompt(message, self.language)
+            # Use a follow-up template when the symptom was already discussed.
+            template_key = "follow_up" if symptom_key in self._seen_symptoms else "general_reply"
+            self._seen_symptoms.add(symptom_key)
+            reply = t(
+                self.language,
+                template_key,
+                prompt=t(self.language, symptom_key),
+                urgent=t(self.language, "urgent_fallback"),
             )
 
         self.history.append(("assistant", reply))
