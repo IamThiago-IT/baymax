@@ -84,6 +84,7 @@ class TranslateTests(unittest.TestCase):
             "greeting", "prompt", "assistant_prefix", "exit", "urgent_fallback",
             "fever", "cough", "headache", "stomach", "default_symptom",
             "general_reply", "follow_up", "restricted_message",
+            "farewell_check", "farewell_thanks", "farewell_stay",
         }
         self.assertTrue(required_keys.issubset(STRINGS["eng"].keys()))
 

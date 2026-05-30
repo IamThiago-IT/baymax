@@ -30,6 +30,15 @@ STRINGS: dict[str, dict[str, str]] = {
             "I can help with general health guidance and symptom triage, but I can't diagnose or prescribe. "
             "If you share your main symptoms, I can suggest safe next steps."
         ),
+        "farewell_check": (
+            "Before you go, I want to make sure you're okay. Are you feeling alright?"
+        ),
+        "farewell_thanks": (
+            "I'm glad to hear that. Take care, and don't hesitate to come back if you need anything. Goodbye! 💙"
+        ),
+        "farewell_stay": (
+            "I'm here whenever you need me. What else can I help you with?"
+        ),
     },
     "ptbr": {
         "greeting": (
@@ -54,6 +63,15 @@ STRINGS: dict[str, dict[str, str]] = {
         "restricted_message": (
             "Posso ajudar com orientações gerais de saúde e triagem de sintomas, mas não posso diagnosticar nem prescrever. "
             "Se você me disser os principais sintomas, posso sugerir próximos passos seguros."
+        ),
+        "farewell_check": (
+            "Antes de ir, quero me certificar de que você está bem. Você está se sentindo bem?"
+        ),
+        "farewell_thanks": (
+            "Fico feliz em saber disso. Se cuide, e não hesite em voltar se precisar de algo. Até logo! 💙"
+        ),
+        "farewell_stay": (
+            "Estou aqui sempre que precisar. No que mais posso te ajudar?"
         ),
     },
 }

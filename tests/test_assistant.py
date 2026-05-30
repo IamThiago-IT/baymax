@@ -5,6 +5,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from baymax.assistant import BaymaxAssistant, _extract_symptom_prompt
+from baymax.cli import _is_affirmative
 
 
 class ExtractSymptomPromptTests(unittest.TestCase):
@@ -136,3 +137,63 @@ class BaymaxAssistantRespondTests(unittest.TestCase):
         # Both start with "I hear you." (general_reply) not "Thanks for the update."
         self.assertIn("I hear you", r1.text)
         self.assertIn("I hear you", r2.text)
+
+
+class IsAffirmativeTests(unittest.TestCase):
+    # --- English affirmatives ---
+    def test_yes_english(self):
+        self.assertTrue(_is_affirmative("yes", "eng"))
+
+    def test_yeah_english(self):
+        self.assertTrue(_is_affirmative("yeah, I'm fine", "eng"))
+
+    def test_fine_english(self):
+        self.assertTrue(_is_affirmative("I'm fine", "eng"))
+
+    def test_okay_english(self):
+        self.assertTrue(_is_affirmative("okay", "eng"))
+
+    def test_feeling_better_english(self):
+        self.assertTrue(_is_affirmative("feeling better now", "eng"))
+
+    # --- English negatives ---
+    def test_no_english(self):
+        self.assertFalse(_is_affirmative("no, still sick", "eng"))
+
+    def test_not_well_english(self):
+        self.assertFalse(_is_affirmative("not really", "eng"))
+
+    def test_empty_english(self):
+        self.assertFalse(_is_affirmative("", "eng"))
+
+    # --- Portuguese affirmatives ---
+    def test_sim_portuguese(self):
+        self.assertTrue(_is_affirmative("sim", "ptbr"))
+
+    def test_tudo_bem_portuguese(self):
+        self.assertTrue(_is_affirmative("tudo bem", "ptbr"))
+
+    def test_estou_bem_portuguese(self):
+        self.assertTrue(_is_affirmative("estou bem sim", "ptbr"))
+
+    def test_melhor_portuguese(self):
+        self.assertTrue(_is_affirmative("estou melhor", "ptbr"))
+
+    # --- Portuguese negatives ---
+    def test_nao_portuguese(self):
+        self.assertFalse(_is_affirmative("não, ainda com febre", "ptbr"))
+
+    def test_empty_portuguese(self):
+        self.assertFalse(_is_affirmative("", "ptbr"))
+
+    # --- Case insensitivity ---
+    def test_case_insensitive_english(self):
+        self.assertTrue(_is_affirmative("YES", "eng"))
+
+    def test_case_insensitive_portuguese(self):
+        self.assertTrue(_is_affirmative("TUDO BEM", "ptbr"))
+
+    # --- Unknown language falls back to English ---
+    def test_unknown_language_fallback(self):
+        self.assertTrue(_is_affirmative("yes", "fr"))
+
