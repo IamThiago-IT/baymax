@@ -44,8 +44,7 @@ STRINGS: dict[str, dict[str, str]] = {
             "If you share your main symptoms, I can suggest safe next steps."
         ),
         "farewell_check": (
-            "Before you go, I want to make sure you're okay. "
-            "Are you feeling alright?"
+            "Before you go, I want to make sure you're okay. Are you feeling alright?"
         ),
         "farewell_thanks": (
             "I'm glad to hear that. Take care, and don't hesitate to come "

@@ -79,14 +79,28 @@ class TranslateTests(unittest.TestCase):
 
     def test_all_eng_keys_present(self):
         from baymax.i18n import STRINGS
+
         required_keys = {
-            "greeting", "prompt", "assistant_prefix", "exit", "urgent_fallback",
-            "fever", "cough", "headache", "stomach", "default_symptom",
-            "general_reply", "follow_up", "restricted_message",
-            "farewell_check", "farewell_thanks", "farewell_stay",
+            "greeting",
+            "prompt",
+            "assistant_prefix",
+            "exit",
+            "urgent_fallback",
+            "fever",
+            "cough",
+            "headache",
+            "stomach",
+            "default_symptom",
+            "general_reply",
+            "follow_up",
+            "restricted_message",
+            "farewell_check",
+            "farewell_thanks",
+            "farewell_stay",
         }
         self.assertTrue(required_keys.issubset(STRINGS["eng"].keys()))
 
     def test_all_ptbr_keys_match_eng(self):
         from baymax.i18n import STRINGS
+
         self.assertEqual(set(STRINGS["eng"].keys()), set(STRINGS["ptbr"].keys()))
