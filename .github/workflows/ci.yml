@@ -36,4 +36,4 @@ jobs:
         run: mypy src
 
       - name: Test with pytest and coverage
-        run: pytest --cov=baymax --cov-report=term-missing --cov-report=xml --cov-fail-under=70
+        run: pytest --cov=baymax --cov-report=term-missing --cov-report=xml --cov-fail-under=80
