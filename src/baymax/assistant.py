@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from .i18n import t
 from .safety import SafetyResult, assess_message
 
-
 # Keywords organized by symptom category and language.
 # Each language key maps to a tuple of trigger phrases.
 SYMPTOM_KEYWORDS: dict[str, dict[str, tuple[str, ...]]] = {
@@ -65,7 +64,9 @@ class BaymaxAssistant:
         else:
             symptom_key = _extract_symptom_prompt(message, self.language)
             # Use a follow-up template when the symptom was already discussed.
-            template_key = "follow_up" if symptom_key in self._seen_symptoms else "general_reply"
+            template_key = (
+                "follow_up" if symptom_key in self._seen_symptoms else "general_reply"
+            )
             self._seen_symptoms.add(symptom_key)
             reply = t(
                 self.language,

@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from .i18n import t
 
-
 EMERGENCY_KEYWORDS = (
     "chest pain",
     "trouble breathing",

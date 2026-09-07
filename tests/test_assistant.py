@@ -1,6 +1,6 @@
 import sys
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -14,19 +14,27 @@ class ExtractSymptomPromptTests(unittest.TestCase):
         self.assertEqual(_extract_symptom_prompt("I have a fever", "eng"), "fever")
 
     def test_temperature_english(self):
-        self.assertEqual(_extract_symptom_prompt("My temperature is high", "eng"), "fever")
+        self.assertEqual(
+            _extract_symptom_prompt("My temperature is high", "eng"), "fever"
+        )
 
     def test_cough_english(self):
-        self.assertEqual(_extract_symptom_prompt("I have a sore throat", "eng"), "cough")
+        self.assertEqual(
+            _extract_symptom_prompt("I have a sore throat", "eng"), "cough"
+        )
 
     def test_throat_english(self):
         self.assertEqual(_extract_symptom_prompt("My throat hurts", "eng"), "cough")
 
     def test_headache_english(self):
-        self.assertEqual(_extract_symptom_prompt("I have a headache", "eng"), "headache")
+        self.assertEqual(
+            _extract_symptom_prompt("I have a headache", "eng"), "headache"
+        )
 
     def test_migraine_english(self):
-        self.assertEqual(_extract_symptom_prompt("terrible migraine today", "eng"), "headache")
+        self.assertEqual(
+            _extract_symptom_prompt("terrible migraine today", "eng"), "headache"
+        )
 
     def test_nausea_english(self):
         self.assertEqual(_extract_symptom_prompt("I feel nausea", "eng"), "stomach")
@@ -35,14 +43,18 @@ class ExtractSymptomPromptTests(unittest.TestCase):
         self.assertEqual(_extract_symptom_prompt("I have diarrhea", "eng"), "stomach")
 
     def test_default_when_unknown_english(self):
-        self.assertEqual(_extract_symptom_prompt("I feel bad", "eng"), "default_symptom")
+        self.assertEqual(
+            _extract_symptom_prompt("I feel bad", "eng"), "default_symptom"
+        )
 
     # --- Portuguese ---
     def test_fever_portuguese(self):
         self.assertEqual(_extract_symptom_prompt("Estou com febre", "ptbr"), "fever")
 
     def test_temperatura_portuguese(self):
-        self.assertEqual(_extract_symptom_prompt("minha temperatura está alta", "ptbr"), "fever")
+        self.assertEqual(
+            _extract_symptom_prompt("minha temperatura está alta", "ptbr"), "fever"
+        )
 
     def test_tosse_portuguese(self):
         self.assertEqual(_extract_symptom_prompt("Estou com tosse", "ptbr"), "cough")
@@ -51,7 +63,9 @@ class ExtractSymptomPromptTests(unittest.TestCase):
         self.assertEqual(_extract_symptom_prompt("Minha garganta dói", "ptbr"), "cough")
 
     def test_dor_de_cabeca_portuguese(self):
-        self.assertEqual(_extract_symptom_prompt("Estou com dor de cabeça", "ptbr"), "headache")
+        self.assertEqual(
+            _extract_symptom_prompt("Estou com dor de cabeça", "ptbr"), "headache"
+        )
 
     def test_enxaqueca_portuguese(self):
         self.assertEqual(_extract_symptom_prompt("Tenho enxaqueca", "ptbr"), "headache")
@@ -63,7 +77,9 @@ class ExtractSymptomPromptTests(unittest.TestCase):
         self.assertEqual(_extract_symptom_prompt("Tenho diarreia", "ptbr"), "stomach")
 
     def test_default_when_unknown_portuguese(self):
-        self.assertEqual(_extract_symptom_prompt("me sinto mal", "ptbr"), "default_symptom")
+        self.assertEqual(
+            _extract_symptom_prompt("me sinto mal", "ptbr"), "default_symptom"
+        )
 
     # --- Unknown language falls back to English keywords ---
     def test_falls_back_to_english_for_unknown_language(self):
@@ -196,4 +212,3 @@ class IsAffirmativeTests(unittest.TestCase):
     # --- Unknown language falls back to English ---
     def test_unknown_language_fallback(self):
         self.assertTrue(_is_affirmative("yes", "fr"))
-
